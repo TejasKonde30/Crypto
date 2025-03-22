@@ -8,7 +8,7 @@ async function getCryptoNews() {
   );
   const data = await res.json();
 
-  return data.results.slice(0, 5).map((news: any) => ({
+  return data.results.slice(0, 10).map((news: any) => ({
     title: news.title,
     url: news.url,
     source: news.source.title,
