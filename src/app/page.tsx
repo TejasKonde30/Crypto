@@ -1,103 +1,135 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [coins, setCoins] = useState<
+    { symbol: string; price: string; change: string; volume: string; high: string; low: string; bid: string; ask: string }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [search, setSearch] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    let socket = new WebSocket("wss://stream.binance.com:9443/ws/!ticker@arr");
+
+    const connectSocket = () => {
+      socket = new WebSocket("wss://stream.binance.com:9443/ws/!ticker@arr");
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        const topCoins = data
+          .filter((coin: any) => coin.s.endsWith("USDT"))
+          .slice(0, 50)
+          .map((coin: any) => ({
+            symbol: coin.s,
+            price: parseFloat(coin.c).toFixed(2),
+            change: parseFloat(coin.P).toFixed(2),
+            volume: parseFloat(coin.v).toLocaleString(),
+            high: parseFloat(coin.h).toFixed(2),
+            low: parseFloat(coin.l).toFixed(2),
+            bid: parseFloat(coin.b).toFixed(2),
+            ask: parseFloat(coin.a).toFixed(2),
+          }));
+
+        setCoins(topCoins);
+        setLoading(false);
+        setLastUpdated(new Date().toLocaleTimeString());
+      };
+
+      socket.onerror = () => {
+        console.error("WebSocket error, reconnecting...");
+        setTimeout(connectSocket, 5000);
+      };
+    };
+
+    connectSocket();
+    return () => socket.close();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-white text-gray-900 p-6">
+      {/* Navbar */}
+      <nav className="flex justify-between items-center mb-6 bg-gray-100 p-4 rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-orange-500 bg-clip-text text-transparent">
+          NextCrypto
+        </h1>
+        <div className="flex space-x-4">
+          <Link href="/">
+            <button className="px-4 py-2 text-white font-semibold rounded-lg transition duration-300 bg-gradient-to-r from-cyan-500 to-orange-500 hover:from-cyan-600 hover:to-orange-600 shadow-md shadow-cyan-500/50 hover:shadow-orange-500/50 transform hover:scale-105">
+              🚀 Home
+            </button>
+          </Link>
+          <Link href="/news">
+            <button className="px-4 py-2 text-white font-semibold rounded-lg transition duration-300 bg-gradient-to-r from-cyan-500 to-orange-500 hover:from-cyan-600 hover:to-orange-600 shadow-md shadow-cyan-500/50 hover:shadow-orange-500/50 transform hover:scale-105">
+              📰 Crypto News
+            </button>
+          </Link>
+          <Link href="/charts">
+            <button className="px-4 py-2 text-white font-semibold rounded-lg transition duration-300 bg-gradient-to-r from-cyan-500 to-orange-500 hover:from-cyan-600 hover:to-orange-600 shadow-md shadow-cyan-500/50 hover:shadow-orange-500/50 transform hover:scale-105">
+              📈 Crypto Charts
+            </button>
+          </Link>
+          <Link href="/about">
+            <button className="px-4 py-2 text-white font-semibold rounded-lg transition duration-300 bg-gradient-to-r from-cyan-500 to-orange-500 hover:from-cyan-600 hover:to-orange-600 shadow-md shadow-cyan-500/50 hover:shadow-orange-500/50 transform hover:scale-105">
+              👤 About
+            </button>
+          </Link>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </nav>
+
+      {/* Search Bar */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="🔍 Search for a coin..."
+          className="w-full p-2 rounded-lg bg-gray-200 border border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-cyan-500"
+          value={search}
+          onChange={(e) => setSearch(e.target.value.toUpperCase())}
+        />
+      </div>
+
+      <p className="text-sm text-gray-600 mb-4">⏳ Last Updated: {lastUpdated || "Fetching..."}</p>
+
+      {loading ? (
+        <p className="text-center text-gray-700">Loading...</p>
+      ) : (
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b border-gray-300 text-cyan-600">
+              <th className="p-3">Symbol</th>
+              <th className="p-3">Price</th>
+              <th className="p-3">24h Change</th>
+              <th className="p-3">Volume</th>
+              <th className="p-3">24h High</th>
+              <th className="p-3">24h Low</th>
+              <th className="p-3">Bid</th>
+              <th className="p-3">Ask</th>
+            </tr>
+          </thead>
+          <tbody>
+            {coins
+              .filter((coin) => coin.symbol.includes(search))
+              .map((coin) => (
+                <tr key={coin.symbol} className="border-b border-gray-200 hover:bg-gray-100">
+                  <td className="p-3 text-cyan-600">{coin.symbol}</td>
+                  <td className="p-3 text-orange-500">${coin.price}</td>
+                  <td
+                    className={`p-3 font-bold ${parseFloat(coin.change) >= 0 ? "text-green-600" : "text-red-600"}`}
+                  >
+                    {coin.change}%
+                  </td>
+                  <td className="p-3 text-gray-700">{coin.volume}</td>
+                  <td className="p-3 text-gray-700">${coin.high}</td>
+                  <td className="p-3 text-gray-700">${coin.low}</td>
+                  <td className="p-3 text-gray-700">${coin.bid}</td>
+                  <td className="p-3 text-gray-700">${coin.ask}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
