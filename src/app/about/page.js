@@ -5,7 +5,7 @@ import Link from "next/link";
 const aboutMe = {
   name: "Tejas Mohan Konde",
   message:
-    "I'm a Web developer. Stood 2nd in post-graduation (M.Sc. in Computer Science). Certified in PreCAT and skilled in HTML, CSS, JavaScript, React, Node.js, mongoDB. Passionate about building scalable web applications and exploring Big Data, AI, and emerging technologies. Seeking opportunities to contribute and grow in the tech industry",
+    "I'm a Web Developer. Stood 2nd in post-graduation (M.Sc. in Computer Science). Certified in PreCAT and skilled in HTML, CSS, JavaScript, React, Node.js, mongoDB. Passionate about building scalable web applications and exploring Big Data, AI, and emerging technologies. Seeking opportunities to contribute and grow in the tech industry",
   buildDate: new Date().toLocaleString(), // Shows when the page was built
 };
 
