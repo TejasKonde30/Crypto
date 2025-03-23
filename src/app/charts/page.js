@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "rec
 import Link from "next/link";
 
 export default function CryptoCharts() {
-  const [data, setData] = useState<{ time: string; price: number }[]>([]);
+  const [data, setData] = useState([]);
   const [selectedCoin, setSelectedCoin] = useState("BTCUSDT");
 
   useEffect(() => {

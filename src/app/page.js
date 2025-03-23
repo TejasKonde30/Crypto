@@ -3,11 +3,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Home() {
-  const [coins, setCoins] = useState<
-    { symbol: string; price: string; change: string; volume: string; high: string; low: string; bid: string; ask: string }[]
-  >([]);
+  const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [lastUpdated, setLastUpdated] = useState("");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -20,9 +18,9 @@ export default function Home() {
         const data = JSON.parse(event.data);
 
         const topCoins = data
-          .filter((coin: any) => coin.s.endsWith("USDT"))
+          .filter((coin) => coin.s.endsWith("USDT"))
           .slice(0, 50)
-          .map((coin: any) => ({
+          .map((coin) => ({
             symbol: coin.s,
             price: parseFloat(coin.c).toFixed(2),
             change: parseFloat(coin.P).toFixed(2),
@@ -50,7 +48,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 p-6">
-      {/* Navbar */}
       <nav className="flex justify-between items-center mb-6 bg-gray-100 p-4 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-orange-500 bg-clip-text text-transparent">
           NextCrypto
@@ -79,7 +76,6 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Search Bar */}
       <div className="mb-4">
         <input
           type="text"

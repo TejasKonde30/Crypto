@@ -1,11 +1,11 @@
-// src/app/about/page.tsx
+// src/app/about/page.js
 import Link from "next/link";
 
 // Static data (no dynamic fetching, ensuring SSG)
 const aboutMe = {
   name: "Tejas Mohan Konde",
   message:
-"I'm a Web developer . Stood 2nd in post-graduation (M.Sc. in Computer Science). Certified in PreCAT and skilled in HTML, CSS, JavaScript, React, Node.js, mongoDB. Passionate about building scalable web applications and exploring Big Data, AI, and emerging technologies. Seeking opportunities to contribute and grow in the tech industry",
+    "I'm a Web developer. Stood 2nd in post-graduation (M.Sc. in Computer Science). Certified in PreCAT and skilled in HTML, CSS, JavaScript, React, Node.js, mongoDB. Passionate about building scalable web applications and exploring Big Data, AI, and emerging technologies. Seeking opportunities to contribute and grow in the tech industry",
   buildDate: new Date().toLocaleString(), // Shows when the page was built
 };
 
@@ -48,8 +48,7 @@ export default function About() {
         </h1>
         <p className="text-gray-700 mb-2">Hi, I’m {aboutMe.name}!</p>
         <p className="text-gray-700 mb-4">{aboutMe.message}</p>
-        <p className="text-gray-500">
-        </p>
+        
       </div>
     </div>
   );

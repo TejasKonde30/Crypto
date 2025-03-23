@@ -1,14 +1,16 @@
 import Link from "next/link";
 
 export const dynamic = "force-dynamic"; // Ensures fresh data on every request
+
 async function getCryptoNews() {
   const res = await fetch(
     "https://cryptopanic.com/api/v1/posts/?public=true",
-    { cache: "no-store" } // Ensures data is fetched fresh each time
+    { cache: "no-store" } // Ensures fresh data is fetched every time
   );
+
   const data = await res.json();
 
-  return data.results.slice(0, 10).map((news: any) => ({
+  return data.results.slice(0, 10).map((news) => ({
     title: news.title,
     url: news.url,
     source: news.source.title,
@@ -56,7 +58,7 @@ export default async function CryptoNewsPage() {
       </h1>
 
       {/* News Articles */}
-      <div className="w-full max-w-3xl space-y-6 ml-[350px]">
+      <div className="w-full max-w-3xl space-y-6 mx-auto">
         {news.map((article, index) => (
           <div
             key={index}
@@ -73,8 +75,6 @@ export default async function CryptoNewsPage() {
           </div>
         ))}
       </div>
-
-     
     </div>
   );
 }
